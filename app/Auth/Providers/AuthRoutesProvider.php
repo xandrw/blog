@@ -14,15 +14,18 @@ class AuthRoutesProvider extends RouteServiceProvider
     public function boot(): void
     {
         $this->routes(function() {
-            Route::middleware('web')
-                ->group(function() {
-                    Route::get('home', function () { return 'Home'; })->name('home');
+            Route::middleware('web')->group(function() {
+                Route::middleware('guest')->group(function() {
                     Route::get('login', [LoginController::class, 'show'])->name('auth.login.show');
                     Route::post('login', [LoginController::class, 'store'])->name('auth.login.store');
-                    Route::get('logout', [LoginController::class, 'destroy'])->name('auth.login.destroy');
                     Route::get('register', [RegisterController::class, 'show'])->name('auth.register.show');
                     Route::post('register', [RegisterController::class, 'store'])->name('auth.register.store');
                 });
+
+                Route::get('logout', [LoginController::class, 'destroy'])
+                    ->middleware('auth')
+                    ->name('auth.login.destroy');
+            });
         });
     }
 }
