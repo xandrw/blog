@@ -13,12 +13,12 @@ class CreateRolesTable extends Migration
      */
     public function up()
     {
-        Schema::create('roles', function (Blueprint $table) {
+        Schema::create('roles', function(Blueprint $table) {
             $table->id();
             $table->string('name');
             $table->string('description');
-            $table->boolean('ignore_id');
-            $table->boolean('ignore_columns');
+            $table->boolean('ignore_id')->default(false);
+            $table->boolean('ignore_columns')->default(false);
             $table->timestamps();
         });
     }

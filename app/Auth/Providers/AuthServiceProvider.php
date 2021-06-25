@@ -2,9 +2,11 @@
 
 namespace App\Auth\Providers;
 
+use App\Admin\Roles\Models\Role;
 use App\Users\Models\User;
 use Illuminate\Contracts\Auth\Access\Gate;
 use Illuminate\Foundation\Support\Providers\AuthServiceProvider as ServiceProvider;
+use Illuminate\Support\Facades\Cache;
 
 class AuthServiceProvider extends ServiceProvider
 {
@@ -30,40 +32,31 @@ class AuthServiceProvider extends ServiceProvider
             'read.users.name',
             'read.users.email',
             'read.users.created_at',
-        ];
-
-        // user roles
-        $userRoles = [
-            'admin' => [
-                'ignore_id' => true,
-                'ignore_columns' => true,
-                'permissions' => [
-                    'read.users' => true,
-                    'create.users' => true,
-                    'update.users' => true,
-                    'delete.users' => true
-                ]
-            ]
+            'read.users.updated_at',
         ];
 
         foreach ($permissions as $permission) {
-            $gate->define($permission, function(User $user, int $id = null) use ($permission, $userRoles): bool {
-                foreach ($userRoles as $config) {
-                    [
-                        'ignore_id' => $ignoreId,
-                        'ignore_columns' => $ignoreColumns,
-                        'permissions' => $userPermissions
-                    ] = $config;
+            $gate->define($permission, function(User $user, int $id = null) use ($permission): bool {
+                $user = Cache::remember('user.roles.permissions', 60, function() use ($user) {
+                    $user->load('roles.permissions:id,role_id,name');
 
-                    if ($ignoreColumns && substr_count($permission, '.') > 1) {
+                    return $user;
+                });
+
+                /** @var Role $role */
+                foreach ($user->roles as $role) {
+                    $rolePermissions = $role->permissions->keyBy('name');
+
+                    if ($role->ignore_columns && substr_count($permission, '.') > 1) {
                         $permission = substr($permission, 0, strrpos($permission, '.'));
                     }
 
-                    if (!empty($id) && empty($ignoreId)) {
-                        if (isset($userPermissions["{$permission}.{$id}"])) return true;
+                    if (!empty($id) && !$role->ignore_id) {
+                        if (isset($rolePermissions["{$permission}.{$id}"])) return true;
+                        continue;
                     }
 
-                    if (isset($userPermissions[$permission])) return true;
+                    if (isset($rolePermissions[$permission])) return true;
                 }
 
                 return false;

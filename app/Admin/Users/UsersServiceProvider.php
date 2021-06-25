@@ -5,7 +5,7 @@ namespace App\Admin\Users;
 use App\Admin\SidebarStore;
 use Illuminate\Support\ServiceProvider;
 
-class AdminUsersServiceProvider extends ServiceProvider
+class UsersServiceProvider extends ServiceProvider
 {
     public function boot(SidebarStore $sidebarStore): void
     {

@@ -9,7 +9,8 @@
         '#' => 'id',
         'Name' => 'name',
         'Email' => 'email',
-        'Created at' => 'created_at'
+        'Created at' => 'created_at',
+        'Updated at' => 'updated_at'
     ];
 @endphp
 
@@ -23,12 +24,14 @@
     @endif
 
     <div class="panel panel-default">
-        <div class="panel-body">
-            <a href="{{ route('admin.users.create') }}" class="btn btn-sm btn-default">Create</a>
-        </div>
+        @can('create.users')
+            <div class="panel-body">
+                <a href="{{ route('admin.users.create') }}" class="btn btn-sm btn-default">Create</a>
+            </div>
+        @endcan
 
         <x-core::table
-            name="users"
+            table="users"
             :items="$users->items()"
             :columns="$columns"
             :withActions="true"

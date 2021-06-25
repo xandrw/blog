@@ -7,15 +7,15 @@ use Illuminate\View\Component;
 
 class Table extends Component
 {
-    public string $name;
+    public string $table;
     public array $columns;
     public array $items;
     public string $route;
     public bool $withActions;
 
-    public function __construct(string $name, array $columns, array $items, string $route, bool $withActions)
+    public function __construct(string $table, array $columns, array $items, string $route, bool $withActions)
     {
-        $this->name = $name;
+        $this->table = $table;
         $this->columns = $columns;
         $this->items = $items;
         $this->route = $route;

@@ -7,7 +7,9 @@ use App\Users\Models\User;
 use Illuminate\Auth\Access\AuthorizationException;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Http\RedirectResponse;
+use Illuminate\Http\Request;
 use Illuminate\Routing\Redirector;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\View\Factory;
 use Illuminate\View\View;
 
@@ -25,11 +27,20 @@ class AdminUsersController extends Controller
     /**
      * @throws AuthorizationException
      */
-    public function index(): View
+    public function index(Request $request): View
     {
         $this->authorize('read.users');
 
-        $users = (new User)->orderBy('updated_at', 'desc')->paginate(5, ['id', 'name', 'email', 'created_at', 'updated_at']);
+        $noCache = $request->headers->getCacheControlDirective('no-cache');
+
+        if ($noCache) {
+            Cache::forget('admin.users.index');
+            $users = (new User)->orderBy('updated_at', 'desc')->paginate(14, ['id', 'name', 'email', 'created_at', 'updated_at']);
+        } else {
+            $users = Cache::remember('admin.users.index', 60, function() {
+                return (new User)->orderBy('updated_at', 'desc')->paginate(14, ['id', 'name', 'email', 'created_at', 'updated_at']);
+            });
+        }
 
         return $this->viewFactory->make('Admin\Users::index', compact('users'));
     }

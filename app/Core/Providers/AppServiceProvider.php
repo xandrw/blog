@@ -7,6 +7,7 @@ use App\Auth\Providers\AuthServiceProvider;
 use App\Users\Providers\UsersServiceProvider;
 use Illuminate\Pagination\Paginator;
 use Illuminate\Support\Facades\Blade;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\ServiceProvider;
 
 class AppServiceProvider extends ServiceProvider
@@ -31,7 +32,7 @@ class AppServiceProvider extends ServiceProvider
         $this->loadMigrationsFrom(__DIR__ . '/../Database/Migrations');
 
         $this->loadViewsFrom(__DIR__ . '/../Views', 'Core');
-        Blade::componentNamespace('App\\Core\\Components', 'core');
+        Blade::componentNamespace('App\Core\Components', 'core');
 
         Paginator::defaultView('Core::pagination.default');
         Paginator::defaultSimpleView('Core::pagination.simple-default');
