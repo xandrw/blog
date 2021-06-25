@@ -6,6 +6,7 @@ use App\Core\Http\Middleware\Authenticate;
 use App\Core\Http\Middleware\EncryptCookies;
 use App\Core\Http\Middleware\PreventRequestsDuringMaintenance;
 use App\Core\Http\Middleware\RedirectIfAuthenticated;
+use App\Core\Http\Middleware\SetMethodFromQueryString;
 use App\Core\Http\Middleware\TrimStrings;
 use App\Core\Http\Middleware\TrustProxies;
 use App\Core\Http\Middleware\VerifyCsrfToken;
@@ -41,7 +42,7 @@ class Kernel extends HttpKernel
         PreventRequestsDuringMaintenance::class,
         ValidatePostSize::class,
         TrimStrings::class,
-        ConvertEmptyStringsToNull::class,
+        ConvertEmptyStringsToNull::class
     ];
 
     /**
