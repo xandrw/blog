@@ -28,14 +28,6 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot()
     {
-        $this->app->register(AuthServiceProvider::class);
-        $this->app->register(EventServiceProvider::class);
-        $this->app->register(RouteServiceProvider::class);
-        // $this->app->register(BroadcastServiceProvider::class);
-
-        $this->app->register(UsersServiceProvider::class);
-        $this->app->register(AdminServiceProvider::class);
-
         $this->loadMigrationsFrom(__DIR__ . '/../Database/Migrations');
 
         $this->loadViewsFrom(__DIR__ . '/../Views', 'Core');
@@ -43,5 +35,13 @@ class AppServiceProvider extends ServiceProvider
 
         Paginator::defaultView('Core::pagination.default');
         Paginator::defaultSimpleView('Core::pagination.simple-default');
+
+        $this->app->register(AuthServiceProvider::class);
+        $this->app->register(EventServiceProvider::class);
+        $this->app->register(RouteServiceProvider::class);
+        // $this->app->register(BroadcastServiceProvider::class);
+
+        $this->app->register(UsersServiceProvider::class);
+        $this->app->register(AdminServiceProvider::class);
     }
 }
