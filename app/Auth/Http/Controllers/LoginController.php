@@ -2,6 +2,7 @@
 
 namespace App\Auth\Http\Controllers;
 
+use App\Auth\Http\Requests\LoginRequest;
 use App\Core\Http\Controllers\Controller;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -14,11 +15,13 @@ class LoginController extends Controller
 {
     private Request $request;
     private Factory $viewFactory;
+    private Redirector $redirector;
 
-    public function __construct(Request $request, Factory $viewFactory)
+    public function __construct(Request $request, Factory $viewFactory, Redirector $redirector)
     {
         $this->request = $request;
         $this->viewFactory = $viewFactory;
+        $this->redirector = $redirector;
     }
 
     public function show(): View
@@ -26,31 +29,28 @@ class LoginController extends Controller
         return $this->viewFactory->make('Auth::login');
     }
 
-    public function store(Redirector $redirector): RedirectResponse
+    public function store(LoginRequest $request): RedirectResponse
     {
-        $credentials = $this->request->validate([
-            'email' => ['required', 'email'],
-            'password' => ['required'],
-        ]);
+        $input = $request->validated();
 
-        if (Auth::attempt($credentials, $this->request->has('remember'))) {
+        if (Auth::attempt($input, $this->request->has('remember'))) {
             $this->request->session()->regenerate();
 
-            return $redirector->home();
+            return $this->redirector->route('admin.users.index');
         }
 
-        return $redirector->back()->withErrors([
+        return $this->redirector->back()->withInput($input)->withErrors([
             'email' => 'The provided credentials do not match our records.',
         ]);
     }
 
-    public function destroy(Redirector $redirector): RedirectResponse
+    public function destroy(): RedirectResponse
     {
         Auth::logout();
 
         $this->request->session()->invalidate();
         $this->request->session()->regenerateToken();
 
-        return $redirector->route('auth.login.show');
+        return $this->redirector->route('auth.login.show');
     }
 }

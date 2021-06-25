@@ -1,4 +1,10 @@
-@component('Auth::layout')
+@extends('Auth::layout')
+
+@section('title')
+    Register
+@endsection
+
+@section('content')
     <div class="container">
         <form action="{{ route('auth.register.store') }}" method="POST" style="width: 400px; margin: 0 auto;">
             @csrf
@@ -6,7 +12,7 @@
 
             <div class="form-group @error('name') has-error @enderror">
                 <label for="name">Name</label>
-                <input type="text" id="name" name="name" class="form-control" required
+                <input type="text" id="name" name="name" value="{{ old('name') }}" class="form-control" required
                     autofocus>
                 @error('name')
                 <span class="help-block">{{ $message }}</span>
@@ -15,18 +21,21 @@
 
             <div class="form-group @error('email') has-error @enderror">
                 <label for="email">Email</label>
-                <input type="email" id="email" name="email" class="form-control" required autofocus>
+                <input type="email" id="email" name="email" value="{{ old('email') }}" class="form-control" required autofocus>
                 @error('email')
                 <span class="help-block">{{ $message }}</span>
                 @enderror
             </div>
 
-            <div class="form-group">
+            <div class="form-group @error('password') has-error @enderror">
                 <label for="password">Password</label>
                 <input type="password" id="password" name="password" class="form-control" required>
+                @error('password')
+                <span class="help-block">{{ $message }}</span>
+                @enderror
             </div>
 
-            <div class="form-group">
+            <div class="form-group @error('password_confirmation') has-error @enderror">
                 <label for="password_confirmation">Password confirmation</label>
                 <input type="password" id="password_confirmation" name="password_confirmation" class="form-control" required>
             </div>
@@ -36,4 +45,4 @@
             <a href="{{ route('auth.login.show') }}" class="btn btn-md btn-default btn-block">Login</a>
         </form>
     </div>
-@endcomponent
+@endsection
