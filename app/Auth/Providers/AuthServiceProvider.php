@@ -33,29 +33,22 @@ class AuthServiceProvider extends ServiceProvider
         ];
 
         // user roles
-        $roles = [
+        $userRoles = [
             'admin' => [
                 'ignore_id' => true,
                 'ignore_columns' => true,
                 'permissions' => [
                     'read.users' => true,
-                    'read.users.1' => true
+                    'create.users' => true,
+                    'update.users' => true,
+                    'delete.users' => true
                 ]
-            ],
-            // 'moderator' => [
-            //     'ignore_id' => false,
-            //     'permissions' => [
-            //         'read:users:id' => true,
-            //         'read:users:name' => true,
-            //         'read:users:email' => true,
-            //         'read:users:created_at' => true
-            //     ]
-            // ]
+            ]
         ];
 
         foreach ($permissions as $permission) {
-            $gate->define($permission, function(User $user, int $id = null) use ($permission, $roles): bool {
-                foreach ($roles as $config) {
+            $gate->define($permission, function(User $user, int $id = null) use ($permission, $userRoles): bool {
+                foreach ($userRoles as $config) {
                     [
                         'ignore_id' => $ignoreId,
                         'ignore_columns' => $ignoreColumns,
